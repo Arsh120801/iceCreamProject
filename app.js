@@ -28,7 +28,7 @@ const session = require('express-session');
 const MongoDBStore = require('connect-mongo');
 
 //const dbUrl = process.env.DB_URL;
-const dbUrl='mongodb://localhost:27017/ic'
+const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/ic'
 mongoose.connect(dbUrl, {
     useNewUrlParser: true,
     //useCreateIndex: true,
@@ -49,9 +49,11 @@ app.engine('ejs',ejsMate);
 app.use(express.static('public'));
 app.use(express.static(path.join(__dirname,'public')));
 
+const secret = process.env.SECRET || 'second secret';
+
 const store = new MongoDBStore({
     mongoUrl:dbUrl,
-    secret : 'second secret',
+    secret,
     touchAfter:24*60*60,
 })
 
@@ -62,7 +64,7 @@ store.on("error",function(e){
 const sessionconfig={
     store,
     name:'session',
-    secret : 'rntndcalcalencccmgavnpemppashn',
+    secret,
     resave: false,
     saveUninitialized: true,
     cookie:{
